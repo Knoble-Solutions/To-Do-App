@@ -3,23 +3,25 @@ const express = require("express")
 const app = express()
 const PORT = 8500;
 const mongoose = require("mongoose");
-require('dotenv').config()
+const connectDB = require('./config/database')
+require('dotenv').config({path: './config/.env'})
 const TodoTask = require("./models/todotask")
-
+const homeRoutes = require("./routes/home")
+//const editRoutes = require("./routes/edit")
+connectDB()
 
 //set middleware
 app.set("view engine", "ejs")
 app.use(express.static('public'))
 app.use(express.urlencoded({extended: true}))
 
+//Set ROUTES
+app.use('/', homeRoutes)
+// app.use('/edit', editRoutes)
 
-mongoose.connect(
-    process.env.DB_CONNECTION,
-    {useNewUrlParser: true},
-    () => {console.log('Connected to db!')}
-)
-//  45 minute troubleshoot. I'm just stumped here
 
+
+// GET METHOD
 app.get('/', async (req, res) => {
 
     try{
@@ -32,6 +34,8 @@ app.get('/', async (req, res) => {
         if (err) return res.status(500).send(err)
     }
 })
+
+
 
 //POST
 app.post('/', async (req, res) => {
